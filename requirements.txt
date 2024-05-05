@@ -1,0 +1,7 @@
+streamlit
+numpy
+tensorflow
+transformers
+torch
+tokenizers
+nltk
