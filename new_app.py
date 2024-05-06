@@ -4,8 +4,6 @@ import numpy as np
 import re
 from collections import defaultdict
 import requests
-import io
-import tempfile
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -54,15 +52,10 @@ def main():
 
             model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.h5"
             response = requests.get(model_url)
-            model_file = io.BytesIO(response.content)
-            
-            # Save the model to a temporary file
-            temp_model_file = tempfile.NamedTemporaryFile(delete=False)
-            temp_model_file.write(model_file.read())
-            temp_model_file.close()
-            
-            # Load model from the temporary file using TensorFlow's Keras
-            model = tf.keras.models.load_model(temp_model_file.name, compile=False)
+            model_file = tf.keras.utils.get_file("model1.h5", model_url)
+
+            # Load model directly from URL using TensorFlow's Keras
+            model = tf.keras.models.load_model(model_file, compile=False)
 
             messages = user_messages[selected_user]
 
