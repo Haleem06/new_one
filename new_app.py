@@ -4,7 +4,7 @@ import numpy as np
 import re
 from collections import defaultdict
 import requests
-import pickle
+import io
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -55,8 +55,11 @@ def main():
             response = requests.get(model_url)
             model_data = response.content
             
-            # Load model directly from URL using pickle
-            model = pickle.loads(model_data)
+            # Wrap model data in a BytesIO object
+            model_buffer = io.BytesIO(model_data)
+            
+            # Load model using TensorFlow's Keras
+            model = tf.keras.models.load_model(model_buffer, compile=False)
 
             messages = user_messages[selected_user]
 
