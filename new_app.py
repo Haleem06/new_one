@@ -54,7 +54,9 @@ def main():
             model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.h5"
             response = requests.get(model_url)
             model_file = io.BytesIO(response.content)
-            model = tf.keras.models.load_model(model_file)
+            
+            # Load model using keras.load_model
+            model = tf.keras.models.load_model(model_file, compile=False)
 
             messages = user_messages[selected_user]
 
