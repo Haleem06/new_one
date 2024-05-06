@@ -61,7 +61,7 @@ def main():
             temp_model_file.write(model_file.read())
             temp_model_file.close()
             
-            # Load model from the temporary file
+            # Load model from the temporary file using TensorFlow's Keras
             model = tf.keras.models.load_model(temp_model_file.name, compile=False)
 
             messages = user_messages[selected_user]
