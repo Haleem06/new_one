@@ -4,7 +4,7 @@ import numpy as np
 import re
 from collections import defaultdict
 import requests
-import h5py
+import io
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -54,11 +54,13 @@ def main():
             model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.h5"
             response = requests.get(model_url)
             response.raise_for_status()
-            
-            # Load model directly from URL using h5py
-            with h5py.File(response.content, 'r') as model_file:
-                model = tf.keras.models.load_model(model_file, compile=False)
-            
+
+            # Wrap model content in a BytesIO object
+            model_content = io.BytesIO(response.content)
+
+            # Load model using TensorFlow's Keras
+            model = tf.keras.models.load_model(model_content, compile=False)
+
             messages = user_messages[selected_user]
 
             vectorize_layer = tf.keras.layers.TextVectorization(
