@@ -61,9 +61,13 @@ def main():
             temp_model_file.write(model_file.read())
             temp_model_file.close()
             
-            # Load model from the temporary file using TensorFlow's Keras
-            model = tf.keras.models.load_model(temp_model_file.name, compile=False)
-
+            try:
+                # Load model from the temporary file using TensorFlow's Keras
+                model = tf.keras.models.load_model(temp_model_file.name, compile=False)
+            except ValueError as ve:
+                st.error(f"Error loading the model: {ve}")
+                st.stop()
+            
             messages = user_messages[selected_user]
 
             vectorize_layer = tf.keras.layers.TextVectorization(
