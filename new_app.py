@@ -41,10 +41,7 @@ def process_whatsapp_file(uploaded_file):
 # Function to load the sentiment analysis model
 def load_model():
     try:
-        model_architecture = tf.keras.models.load_model('model.json')
-        model_weights = load_model('model.h5', custom_objects={'GlorotUniform': tf.keras.initializers.GlorotUniform()})
-        model = tf.keras.models.Model(model_architecture.input, model_architecture.output)
-        model.set_weights(model_weights.get_weights())
+        model = tf.keras.models.load_model('model.h5', custom_objects={'GlorotUniform': tf.keras.initializers.GlorotUniform()})
         return model
     except Exception as e:
         st.error(f"Error loading model: {e}")
@@ -87,7 +84,4 @@ def main():
                 messages = user_messages[selected_user]
                 sentiment_label = perform_sentiment_analysis(model, messages)
                 if sentiment_label:
-                    st.write(f"Predicted sentiment label: {sentiment_label[0]}")
-
-if __name__ == '__main__':
-    main()
+                    st.write(f"Predicted sentiment label: {sent
