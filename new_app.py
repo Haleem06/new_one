@@ -4,6 +4,7 @@ import numpy as np
 import re
 from collections import defaultdict
 import requests
+import pickle
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -50,16 +51,12 @@ def main():
         if selected_user:
             st.subheader(f"Sentiment Analysis for {selected_user}'s messages")
 
-            model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.json"
+            model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.h5"
             response = requests.get(model_url)
-            model_config = response.json()
+            model_data = response.content
             
-            # Load model configuration directly from URL using TensorFlow's Keras
-            model = tf.keras.models.model_from_json(model_config)
-            model_weights_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1_weights.h5"
-            model_weights_response = requests.get(model_weights_url)
-            model_weights_file = tf.keras.utils.get_file("model1_weights.h5", model_weights_url)
-            model.load_weights(model_weights_file)
+            # Load model directly from URL using pickle
+            model = pickle.loads(model_data)
 
             messages = user_messages[selected_user]
 
