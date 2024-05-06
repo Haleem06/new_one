@@ -4,7 +4,7 @@ import numpy as np
 import re
 from collections import defaultdict
 import requests
-import io
+import os
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -52,14 +52,10 @@ def main():
             st.subheader(f"Sentiment Analysis for {selected_user}'s messages")
 
             model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.h5"
-            response = requests.get(model_url)
-            model_data = response.content
-            
-            # Wrap model data in a BytesIO object
-            model_buffer = io.BytesIO(model_data)
+            model_path = tf.keras.utils.get_file("model1.h5", model_url)
             
             # Load model using TensorFlow's Keras
-            model = tf.keras.models.load_model(model_buffer, compile=False)
+            model = tf.keras.models.load_model(model_path, compile=False)
 
             messages = user_messages[selected_user]
 
