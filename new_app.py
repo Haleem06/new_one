@@ -4,8 +4,6 @@ import numpy as np
 import re
 from collections import defaultdict
 import requests
-import io
-import tempfile
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -54,16 +52,14 @@ def main():
 
             model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.h5"
             response = requests.get(model_url)
-            model_file = io.BytesIO(response.content)
+            model_file = response.content
             
-            # Save the model to a temporary file
-            temp_model_file = tempfile.NamedTemporaryFile(delete=False)
-            temp_model_file.write(model_file.read())
-            temp_model_file.close()
-            
+            # Specify the directory where the SavedModel is located
+            saved_model_dir = "/path/to/saved_model_directory"
+
             try:
-                # Load model from the temporary file using keras.layers.TFSMLayer
-                model = tf.keras.layers.TFSMLayer(temp_model_file.name, call_endpoint='serving_default')
+                # Load model from the SavedModel directory
+                model = tf.keras.layers.TFSMLayer(saved_model_dir, call_endpoint='serving_default')
             except ValueError as ve:
                 st.error(f"Error loading the model: {ve}")
                 st.stop()
