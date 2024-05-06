@@ -4,7 +4,6 @@ import numpy as np
 import re
 from collections import defaultdict
 import requests
-import io
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -51,28 +50,20 @@ def main():
         if selected_user:
             st.subheader(f"Sentiment Analysis for {selected_user}'s messages")
 
-            model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.h5"
+            model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1"
             response = requests.get(model_url)
             response.raise_for_status()
-
-            # Wrap model content in a BytesIO object
-            model_content = io.BytesIO(response.content)
-
-            # Load model using TensorFlow's Keras
-            model = tf.keras.models.load_model(model_content, compile=False)
-
+            
+            # Load model directly from URL using TensorFlow's tf.io
+            model = tf.saved_model.load(response.content)
+            
             messages = user_messages[selected_user]
 
-            vectorize_layer = tf.keras.layers.TextVectorization(
-                max_tokens=9000,
-                output_mode='int',
-                output_sequence_length=200
-            )
-            vectorize_layer.adapt([" ".join(messages)])
+            vectorize_layer = model.signatures['serving_default'].get('text_vectorization')
+            sequences = vectorize_layer(tf.constant([" ".join(messages)]))['text_vectorization']
 
-            sequences = vectorize_layer([" ".join(messages)])
             sequences = tf.pad(sequences, [[0, 0], [0, 200 - sequences.shape[1]]]) if sequences.shape[1] < 200 else sequences[:, :200]
-            sentiment_label = np.argmax(model.predict(sequences), axis=1)
+            sentiment_label = np.argmax(model(tf.constant(sequences))['dense_2'], axis=1)
 
             st.write(f"Predicted sentiment label: {sentiment_label[0]}")
 
