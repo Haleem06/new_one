@@ -62,8 +62,8 @@ def main():
             temp_model_file.close()
             
             try:
-                # Load model from the temporary file using TensorFlow's Keras
-                model = tf.keras.models.load_model(temp_model_file.name, compile=False)
+                # Load model from the temporary file using keras.layers.TFSMLayer
+                model = tf.keras.layers.TFSMLayer(temp_model_file.name, call_endpoint='serving_default')
             except ValueError as ve:
                 st.error(f"Error loading the model: {ve}")
                 st.stop()
@@ -79,7 +79,7 @@ def main():
 
             sequences = vectorize_layer([" ".join(messages)])
             sequences = tf.pad(sequences, [[0, 0], [0, 200 - sequences.shape[1]]]) if sequences.shape[1] < 200 else sequences[:, :200]
-            sentiment_label = np.argmax(model.predict(sequences), axis=1)
+            sentiment_label = np.argmax(model(sequences), axis=1)
 
             st.write(f"Predicted sentiment label: {sentiment_label[0]}")
 
