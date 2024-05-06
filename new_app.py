@@ -38,7 +38,7 @@ def process_whatsapp_file(uploaded_file):
 
   return user_messages
 
-# Main function
+# Main function with enhanced debugging
 def main():
   st.title('WhatsApp Chat Sentiment Analyzer')
   st.sidebar.title('Options')
@@ -78,7 +78,13 @@ def main():
         else:
           # Handle other potential ValueErrors differently
           st.error(f"An error occurred while loading the model: {e}")
+          # Print the full traceback for detailed debugging
+          print(traceback.format_exc())  # This line is for debugging purposes only
           return
+
+      # **Additional debugging:**
+      # Print model summary for inspection
+      # st.write(model.summary())  # Uncomment to print model summary
 
       # Fetch and preprocess messages
       messages = user_messages[selected_user]
@@ -93,6 +99,4 @@ def main():
 
       # Predict sentiment
       sequences = vectorize_layer([" ".join(messages)])
-      if sequences.shape[1] < 200:
-        sequences = tf.pad(sequences, [[0, 0], [0, 200 - sequences.shape[1]]])
-      elif sequences.shape
+      if sequences.shape
