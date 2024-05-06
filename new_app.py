@@ -78,12 +78,13 @@ def main():
         else:
           # Handle other potential ValueErrors differently
           st.error(f"An error occurred while loading the model: {e}")
-          # Print the full traceback for detailed debugging
-          print(traceback.format_exc())  # This line is for debugging purposes only
+          # Print the full traceback and model summary for debugging
+          print(traceback.format_exc())  # Print full traceback
+          # st.write(model.summary())  # Uncomment to print model summary (if model is loaded successfully)
           return
 
       # **Additional debugging:**
-      # Print model summary for inspection
+      # Print model summary for inspection (if loaded successfully)
       # st.write(model.summary())  # Uncomment to print model summary
 
       # Fetch and preprocess messages
@@ -92,11 +93,4 @@ def main():
       # Convert the messages into numerical vectors using the TextVectorization layer
       vectorize_layer = tf.keras.layers.TextVectorization(
           max_tokens=9000,
-          output_mode='int',
-          output_sequence_length=200
-      )
-      vectorize_layer.adapt([" ".join(messages)])
-
-      # Predict sentiment
-      sequences = vectorize_layer([" ".join(messages)])
-      if sequences.shape
+          output_mode='int
