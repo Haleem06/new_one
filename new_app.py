@@ -4,7 +4,6 @@ import numpy as np
 import re
 from collections import defaultdict
 import requests
-import os
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -52,18 +51,15 @@ def main():
             st.subheader(f"Sentiment Analysis for {selected_user}'s messages")
 
             model_url = "https://github.com/Karth-i/New_One/raw/9ba3e1c71a83bf70df186c342b837a9745721849/model1.h5"
-            model_path = tf.keras.utils.get_file("model1.h5", model_url)
+            response = requests.get(model_url, stream=True)
+            response.raise_for_status()
             
-            # Load model using TensorFlow's Keras
-            model = tf.keras.models.load_model(model_path, compile=False)
-
+            # Load model directly from URL using TensorFlow's Keras
+            model = tf.keras.models.model_from_config(response.json(), custom_objects={'TextVectorization': tf.keras.layers.TextVectorization})
+            
             messages = user_messages[selected_user]
 
-            vectorize_layer = tf.keras.layers.TextVectorization(
-                max_tokens=9000,
-                output_mode='int',
-                output_sequence_length=200
-            )
+            vectorize_layer = model.get_layer('text_vectorization')
             vectorize_layer.adapt([" ".join(messages)])
 
             sequences = vectorize_layer([" ".join(messages)])
