@@ -5,6 +5,7 @@ import re
 from collections import defaultdict
 import requests
 import io
+import tempfile
 
 # Function to extract English words from a text
 def extract_english_words(text):
@@ -55,8 +56,13 @@ def main():
             response = requests.get(model_url)
             model_file = io.BytesIO(response.content)
             
-            # Load model using keras.load_model
-            model = tf.keras.models.load_model(model_file, compile=False)
+            # Save the model to a temporary file
+            temp_model_file = tempfile.NamedTemporaryFile(delete=False)
+            temp_model_file.write(model_file.read())
+            temp_model_file.close()
+            
+            # Load model from the temporary file
+            model = tf.keras.models.load_model(temp_model_file.name, compile=False)
 
             messages = user_messages[selected_user]
 
